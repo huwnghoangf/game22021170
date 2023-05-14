@@ -9,8 +9,9 @@ int mt[11][11];
 int mt1[11][11];
 int mt2[11][11];
 int flag[11][11];
-int numofbom = 10;
+int numofbom;
 int numofflag=0;
+int ktlose = 0;
 
     GameMap game_map;
     
@@ -63,6 +64,7 @@ void taomap()
     }
     int row,col;
     srand(time(NULL));
+    numofbom = 10 + rand() % 6;
     while(numofbom!=0)
     {
       row = rand() % 9;
@@ -142,6 +144,7 @@ void loang(int x, int y)
 
 BaseObject g_background;
 BaseObject g_background1;
+BaseObject g_background2;
 
 bool LoadBackground()
 {
@@ -155,6 +158,15 @@ bool LoadBackground()
 bool LoadWin()
 {
     bool ret = g_background1.LoadImg("win.png",g_screen);
+    if(ret== false)
+     return false;
+
+    return true;
+}
+
+bool LoadLose()
+{
+    bool ret = g_background2.LoadImg("lose.png",g_screen);
     if(ret== false)
      return false;
 
@@ -198,7 +210,10 @@ void PollEvent(SDL_Event* event)
            case SDL_BUTTON_LEFT:
               if(game_map1.game_map_.tile[i][j]==0 )
                 {
-                    if(mt[i][j]==1) exit(0);
+                    if(mt[i][j]==1)
+                    {
+                        ktlose = 1;
+                    }
                     else
                     {
                     game_map1.game_map_.tile[i][j]=mt2[i][j]+3;
@@ -308,6 +323,13 @@ int main( int arc, char* argv[])
      SDL_SetRenderDrawColor(g_screen, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR,RENDER_DRAW_COLOR,RENDER_DRAW_COLOR);
      g_background1.Render(g_screen,NULL);
     }
+        if(ktlose == 1)
+        {
+            if (LoadLose()==false) return -1; 
+     SDL_RenderClear(g_screen);
+     SDL_SetRenderDrawColor(g_screen, RENDER_DRAW_COLOR, RENDER_DRAW_COLOR,RENDER_DRAW_COLOR,RENDER_DRAW_COLOR);
+     g_background2.Render(g_screen,NULL);
+        }
         SDL_RenderPresent(g_screen);
     }
     close();
